@@ -4,18 +4,23 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  FlatList
+  FlatList,
+  ScrollView
 } from "react-native";
 import { ListItem, Button } from "react-native-elements";
 import { Context as AvatarContext } from "../../context/AvatarContext";
 import * as Constants from "../../constants/avatarConstants";
+import { NavigationEvents } from "react-navigation";
+import { Context as TournamentContext } from "../../context/TournamentContext";
 import Image from "react-native-remote-svg";
 
 const AvatarOverviewScreen = ({ navigation }) => {
   const { state, changeName } = useContext(AvatarContext);
+  const { reset } = useContext(TournamentContext);
   let buttonDisabled = true;
   if (
     state.name !== "" &&
+    state.name.length < 25 &&
     state.attacks[0] !== -1 &&
     state.attacks[1] !== -1 &&
     state.attacks[2] !== -1 &&
@@ -29,9 +34,10 @@ const AvatarOverviewScreen = ({ navigation }) => {
     avatarAttacks.push(i);
   }
 
-  console.log(state.attacks);
   return (
     <View>
+      <NavigationEvents onWillFocus={() => reset()} />
+      <ScrollView>
       <TouchableOpacity onPress={() => navigation.navigate("AvatarSetup")}>
         <Image
           source={Constants.AVATAR[state.type].image}
@@ -78,9 +84,11 @@ const AvatarOverviewScreen = ({ navigation }) => {
       />
       <Button
         title="FIGHT"
+        onPress={() => navigation.navigate('TournamentList')}
         buttonStyle={styles.buttonStyle}
         disabled={buttonDisabled}
       />
+      </ScrollView>
     </View>
   );
 };
