@@ -5,9 +5,9 @@ import Avatar from "../../components/Avatar";
 import { Context as AvatarContext } from "../../context/AvatarContext";
 import * as Constants from "../../constants/avatarConstants";
 
+
 const AvatarSetupScreen = ({ navigation }) => {
   const { changeAvatarType } = useContext(AvatarContext);
-
   const avatars = [];
   for (i = 0; i < 5; i++) {
     avatars.push(i);

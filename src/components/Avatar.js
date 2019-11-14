@@ -1,8 +1,22 @@
-import React from "react";
+import React,{useState} from "react";
 import Image from "react-native-remote-svg";
 import { View, StyleSheet, Text } from "react-native";
+import * as Font from "expo-font";
 
 const Avatar = ({ name, imageSource }) => {
+   
+  const [fontLoaded, setFontLoaded] = useState(false)
+    loadFont = async () => {
+      await Font.loadAsync({
+        "bangers-regular": require("../../assets/fonts/Bangers-Regular.ttf")
+      });
+      setFontLoaded(true)
+    };
+    loadFont()
+
+  if(!fontLoaded) {
+    return null
+  }
   
   return (
     <View style={styles.containerStyle}>
@@ -23,8 +37,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   nameStyle: {
-    //fontFamily: "bangers-regular"
+    fontFamily: "bangers-regular",
     alignSelf: 'center',
+    fontSize: 20,
+    color: 'grey',
     margin: 20
   }
 });

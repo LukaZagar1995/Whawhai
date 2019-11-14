@@ -1,5 +1,3 @@
-export const API_BASE_URL = "";
-
 export const AVATAR = [{
     name: "Marvin",
     attacks: ["Depression #1", "Depression #2", "Depression #3"],

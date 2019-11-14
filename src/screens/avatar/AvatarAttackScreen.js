@@ -16,8 +16,8 @@ const AvatarAttackScreen = ({navigation}) => {
   return (
     <View>
       <Avatar
-        name={Constants.AVATAR[state.type].name}
-        imageSource={Constants.AVATAR[state.type].image}
+        name={Constants.AVATAR[state.warrior.type].name}
+        imageSource={Constants.AVATAR[state.warrior.type].image}
       />
       <FlatList
         data={avatarAttack}
@@ -32,7 +32,7 @@ const AvatarAttackScreen = ({navigation}) => {
             >
               <ListItem
                 chevron={{ size: 30 }}
-                title={Constants.AVATAR[state.type].attacks[item]}
+                title={Constants.AVATAR[state.warrior.type].attacks[item]}
                 style={styles.listItemStyle}
                 titleStyle={{ color: "#989898" }}
               />
