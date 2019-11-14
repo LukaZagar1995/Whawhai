@@ -1,32 +1,33 @@
 import React, { useContext, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { Context as AvatarContext } from "../../context/AvatarContext";
 import * as ApiKeys from "../../constants/apiKeys";
 
 const TournamentDetailScreen = ({ navigation }) => {
   const tournament = navigation.getParam("item");
-  const { state } = useContext(AvatarContext);
-  const data = JSON.stringify(state);
+  const { state, onTournamentJoinResponse } = useContext(AvatarContext);
+  const data = JSON.stringify(state.warrior);
+  const id = tournament.id;
 
   useEffect(() => {
     ws = new WebSocket(
-      ApiKeys.API_BASE_URL + "/tournament/" + tournament.id + "/join"
+      ApiKeys.API_BASE_URL +
+        ApiKeys.API_TOURNAMENT +
+        tournament.id +
+        ApiKeys.API_TOURNAMENT_JOIN
     );
-    ws.onopen= () => {
-      try {
-        ws.send(data);
-      } catch (error) {
-        console.log(error); 
-      }
-      ws.onmessage = evt => {
-        const response = JSON.parse(evt.data);
-      }
+    ws.onopen = () => {
+      onTournamentJoinResponse(ws, data, id, state.id);
     };
   }, []);
 
+  if(state.id !== tournament.id) {
+    return <ActivityIndicator size="large" style={{marginTop: 200}}/>
+  }
+
   return (
     <View>
-      <Text>{tournament.name}</Text>
+      <Text style={styles.titleStyle}>Joined tournament {tournament.name}</Text>
     </View>
   );
 };
@@ -42,6 +43,12 @@ TournamentDetailScreen.navigationOptions = ({ navigation }) => {
   };
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  titleStyle: {
+    alignSelf: "center",
+    justifyContent: 'center',
+    fontSize: 20
+  }
+});
 
 export default TournamentDetailScreen;

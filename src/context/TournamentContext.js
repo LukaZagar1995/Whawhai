@@ -1,4 +1,7 @@
 import createDataContext from "./createDataContext";
+import { navigate } from "../navigationRef";
+import { Alert } from "react-native";
+import * as ApiKeys from "../constants/apiKeys";
 
 const tournamentReducer = (state, action) => {
   switch (action.type) {
@@ -29,22 +32,41 @@ const tournamentReducer = (state, action) => {
   }
 };
 
-const onTournamentsEventsResponse = dispatch => (ws, state) => {
+const onTournamentsEventsResponse = dispatch => (
+  ws,
+  avatarState,
+  tournamentState
+) => {
   ws.onmessage = evt => {
     const response = JSON.parse(evt.data);
     let name = "";
     let id = "";
-    console.log(response);
     if (response.message.event === "tournament.created") {
       name = response.message.data.name;
       id = response.message.data.id;
       dispatch({ type: "add_tournament", payload: { name, id } });
-    } else if (
-      response.message.event === "tournament.created" ||
-      response.message.event === "tournament.timeout" ||
-      response.message.event === "tournament.finished"
-    ) {
+    } else if (response.message.event === "tournament.timeout") {
       id = response.message.id;
+      if (avatarState.id === id) {
+        for (let tournament of tournamentState.tournaments) {
+          if (tournament.id === id) {
+            name = tournament.name;
+          }
+        }
+        Alert.alert("Timeout", `Tournament ${name} timeouted.`);
+        navigate("TournamentList");
+      }
+      dispatch({ type: "remove_tournament", payload: id });
+    } else if (response.message.event === "tournament.finished") {
+      id = response.message.id;
+      if (avatarState.id === id) {
+        for (let tournament of tournamentState.tournaments) {
+          if (tournament.id === id) {
+            name = tournament.name;
+          }
+        }
+        navigate("TournamentResult", { response });
+      }
       dispatch({ type: "remove_tournament", payload: id });
     }
   };
@@ -57,5 +79,5 @@ const reset = dispatch => () => {
 export const { Provider, Context } = createDataContext(
   tournamentReducer,
   { onTournamentsEventsResponse, reset },
-  { tournaments: [] }
+  { tournament: [] }
 );

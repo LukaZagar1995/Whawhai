@@ -1,23 +1,29 @@
 import React, { useContext, useEffect } from "react";
 import * as ApiKeys from "../../constants/apiKeys";
 import { Context as TournamentContext } from "../../context/TournamentContext";
+import { Context as AvatarContext } from "../../context/AvatarContext";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { ListItem } from "react-native-elements";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const TournamentListScreen = ({ navigation }) => {
-  const { state, onTournamentsEventsResponse } = useContext(TournamentContext);
+  const { state: tournamentState, onTournamentsEventsResponse } = useContext(TournamentContext);
+  const { state: avatarState } = useContext(AvatarContext);
+
   useEffect(() => {
     ws = new WebSocket(ApiKeys.API_BASE_URL + ApiKeys.API_TOURNAMENT_EVENTS);
     ws.onopen = () => {
-      onTournamentsEventsResponse(ws, state);
+      onTournamentsEventsResponse(ws, avatarState, tournamentState);
     };
   }, []);
 
+  
+
+ 
   return (
     <View>
       <FlatList
-        data={state.tournaments}
+        data={tournamentState.tournaments}
         keyExtractor={tournament => `${tournament.id}`}
         renderItem={({ item }) => {
           return (
@@ -29,10 +35,12 @@ const TournamentListScreen = ({ navigation }) => {
               <ListItem
                 chevron={{ size: 30 }}
                 title={item.name}
+                rightTitle="Waiting for players"
                 style={styles.listItemStyle}
                 titleStyle={{ color: "#989898" }}
               />
             </TouchableOpacity>
+           
           );
         }}
       />

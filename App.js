@@ -9,6 +9,7 @@ import { Provider as TournamentProvider } from "./src/context/TournamentContext"
 import TournamentListScreen from "./src/screens/tournament/TournamentListScreen";
 import TournamentDetailScreen from "./src/screens/tournament/TournamentDetailScreen";
 import TournamentResultScreen from "./src/screens/tournament/TournamentResultScreen";
+import { setNavigator } from "./src/navigationRef";
 
 const navigator = createSwitchNavigator(
   {
@@ -36,7 +37,11 @@ export default () => {
   return (
     <AvatarProvider>
       <TournamentProvider>
-        <App />
+        <App
+          ref={navigator => {
+            setNavigator(navigator);
+          }}
+        />
       </TournamentProvider>
     </AvatarProvider>
   );

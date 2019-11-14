@@ -15,17 +15,18 @@ import { Context as TournamentContext } from "../../context/TournamentContext";
 import Image from "react-native-remote-svg";
 
 const AvatarOverviewScreen = ({ navigation }) => {
+ 
   const { state, changeName } = useContext(AvatarContext);
   const { reset } = useContext(TournamentContext);
   let buttonDisabled = true;
   if (
-    state.name !== "" &&
-    state.name.length < 25 &&
-    state.attacks[0] !== -1 &&
-    state.attacks[1] !== -1 &&
-    state.attacks[2] !== -1 &&
-    state.attacks[3] !== -1 &&
-    state.attacks[4] !== -1
+    state.warrior.name !== "" &&
+    state.warrior.name.length < 25 &&
+    state.warrior.attacks[0] !== -1 &&
+    state.warrior.attacks[1] !== -1 &&
+    state.warrior.attacks[2] !== -1 &&
+    state.warrior.attacks[3] !== -1 &&
+    state.warrior.attacks[4] !== -1
   ) {
     buttonDisabled = false;
   }
@@ -38,56 +39,58 @@ const AvatarOverviewScreen = ({ navigation }) => {
     <View>
       <NavigationEvents onWillFocus={() => reset()} />
       <ScrollView>
-      <TouchableOpacity onPress={() => navigation.navigate("AvatarSetup")}>
-        <Image
-          source={Constants.AVATAR[state.type].image}
-          style={styles.imageStyle}
+        <TouchableOpacity onPress={() => navigation.navigate("AvatarSetup")}>
+          <Image
+            source={Constants.AVATAR[state.warrior.type].image}
+            style={styles.imageStyle}
+          />
+        </TouchableOpacity>
+        <TextInput
+          placeholder="Name"
+          style={styles.inputStyle}
+          value={state.warrior.name}
+          onChangeText={newValue => changeName(newValue)}
         />
-      </TouchableOpacity>
-      <TextInput
-        placeholder="Name"
-        style={styles.inputStyle}
-        value={state.name}
-        onChangeText={newValue => changeName(newValue)}
-      />
 
-      <FlatList
-        data={avatarAttacks}
-        keyExtractor={attack => `${attack}`}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("AvatarAttack", { item });
-              }}
-            >
-              {state.attacks[item] === -1 ? (
-                <ListItem
-                  chevron={{ size: 30 }}
-                  title={`Selected Attack ${item + 1}`}
-                  style={styles.listItemStyle}
-                  titleStyle={{ color: "#989898" }}
-                />
-              ) : (
-                <ListItem
-                  chevron={{ size: 30 }}
-                  title={
-                    Constants.AVATAR[state.type].attacks[state.attacks[item]]
-                  }
-                  style={styles.listItemStyle}
-                  titleStyle={{ color: "#989898" }}
-                />
-              )}
-            </TouchableOpacity>
-          );
-        }}
-      />
-      <Button
-        title="FIGHT"
-        onPress={() => navigation.navigate('TournamentList')}
-        buttonStyle={styles.buttonStyle}
-        disabled={buttonDisabled}
-      />
+        <FlatList
+          data={avatarAttacks}
+          keyExtractor={attack => `${attack}`}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("AvatarAttack", { item });
+                }}
+              >
+                {state.warrior.attacks[item] === -1 ? (
+                  <ListItem
+                    chevron={{ size: 30 }}
+                    title={`Selected Attack ${item + 1}`}
+                    style={styles.listItemStyle}
+                    titleStyle={{ color: "#989898" }}
+                  />
+                ) : (
+                  <ListItem
+                    chevron={{ size: 30 }}
+                    title={
+                      Constants.AVATAR[state.warrior.type].attacks[
+                        state.warrior.attacks[item]
+                      ]
+                    }
+                    style={styles.listItemStyle}
+                    titleStyle={{ color: "#989898" }}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          }}
+        />
+        <Button
+          title="FIGHT"
+          onPress={() => navigation.navigate("TournamentList")}
+          buttonStyle={styles.buttonStyle}
+          disabled={buttonDisabled}
+        />
       </ScrollView>
     </View>
   );
