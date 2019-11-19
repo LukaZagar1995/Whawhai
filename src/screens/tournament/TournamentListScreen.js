@@ -3,25 +3,37 @@ import * as ApiKeys from "../../constants/apiKeys";
 import { Context as TournamentContext } from "../../context/TournamentContext";
 import { Context as AvatarContext } from "../../context/AvatarContext";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { ListItem } from "react-native-elements";
+import { ListItem, Button } from "react-native-elements";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const TournamentListScreen = ({ navigation }) => {
-  const { state: tournamentState, onTournamentsEventsResponse } = useContext(TournamentContext);
-  const { state: avatarState } = useContext(AvatarContext);
+  const { state: tournamentState, onTournamentsEventsResponse } = useContext(
+    TournamentContext
+  );
+  const { state: avatarState, removeJoinedTournamentId } = useContext(
+    AvatarContext
+  );
 
   useEffect(() => {
     ws = new WebSocket(ApiKeys.API_BASE_URL + ApiKeys.API_TOURNAMENT_EVENTS);
     ws.onopen = () => {
-      onTournamentsEventsResponse(ws, avatarState, tournamentState);
+      onTournamentsEventsResponse(
+        ws,
+        avatarState,
+        tournamentState,
+        removeJoinedTournamentId
+      );
     };
   }, []);
 
-  
-
- 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
+      <Button
+        title="Create Tournament"
+        buttonStyle={styles.buttonStyle}
+        onPress={() => navigation.navigate("TournamentCreate")}
+        containerStyle={{ borderBottomWidth: 1, borderColor: "#E0E0E0" }}
+      />
       <FlatList
         data={tournamentState.tournaments}
         keyExtractor={tournament => `${tournament.id}`}
@@ -40,7 +52,6 @@ const TournamentListScreen = ({ navigation }) => {
                 titleStyle={{ color: "#989898" }}
               />
             </TouchableOpacity>
-           
           );
         }}
       />
@@ -68,6 +79,11 @@ const styles = StyleSheet.create({
   listItemStyle: {
     borderColor: "#E0E0E0",
     borderBottomWidth: 1
+  },
+  buttonStyle: {
+    backgroundColor: "#32CD32",
+    marginHorizontal: 60,
+    marginVertical: 10
   }
 });
 

@@ -1,7 +1,6 @@
 import createDataContext from "./createDataContext";
 import { navigate } from "../navigationRef";
 import { Alert } from "react-native";
-import * as ApiKeys from "../constants/apiKeys";
 
 const tournamentReducer = (state, action) => {
   switch (action.type) {
@@ -35,7 +34,8 @@ const tournamentReducer = (state, action) => {
 const onTournamentsEventsResponse = dispatch => (
   ws,
   avatarState,
-  tournamentState
+  tournamentState,
+  removeJoinedTournamentId
 ) => {
   ws.onmessage = evt => {
     const response = JSON.parse(evt.data);
@@ -47,27 +47,38 @@ const onTournamentsEventsResponse = dispatch => (
       dispatch({ type: "add_tournament", payload: { name, id } });
     } else if (response.message.event === "tournament.timeout") {
       id = response.message.id;
-      if (avatarState.id === id) {
-        for (let tournament of tournamentState.tournaments) {
-          if (tournament.id === id) {
-            name = tournament.name;
+      for (let joinedId of avatarState.joinedIds) {
+        if (joinedId === id) {
+          for (let tournament of tournamentState.tournaments) {
+            if (tournament.id === id) {
+              name = tournament.name;
+            }
           }
         }
-        Alert.alert("Timeout", `Tournament ${name} timeouted.`);
+        Alert.alert("Timeout", `Tournament ${name} timed out.`);
         navigate("TournamentList");
       }
       dispatch({ type: "remove_tournament", payload: id });
+      removeJoinedTournamentId(id);
     } else if (response.message.event === "tournament.finished") {
       id = response.message.id;
-      if (avatarState.id === id) {
-        for (let tournament of tournamentState.tournaments) {
-          if (tournament.id === id) {
-            name = tournament.name;
+
+      for (let joinedId of avatarState.joinedIds) {
+        if (joinedId === id) {
+          for (let tournament of tournamentState.tournaments) {
+            if (tournament.id === id) {
+              name = tournament.name;
+            }
           }
         }
         navigate("TournamentResult", { response });
       }
       dispatch({ type: "remove_tournament", payload: id });
+      removeJoinedTournamentId(id);
+    } else if (response.message.event === "tournament.started") {
+      id = response.message.id;
+      dispatch({ type: "remove_tournament", payload: id });
+      removeJoinedTournamentId(id)
     }
   };
 };

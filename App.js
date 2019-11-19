@@ -10,6 +10,7 @@ import TournamentListScreen from "./src/screens/tournament/TournamentListScreen"
 import TournamentDetailScreen from "./src/screens/tournament/TournamentDetailScreen";
 import TournamentResultScreen from "./src/screens/tournament/TournamentResultScreen";
 import { setNavigator } from "./src/navigationRef";
+import TournamentCreateScreen from "./src/screens/tournament/TournamentCreateScreen";
 
 const navigator = createSwitchNavigator(
   {
@@ -21,6 +22,7 @@ const navigator = createSwitchNavigator(
     tournamentFlow: createStackNavigator({
       TournamentList: TournamentListScreen,
       TournamentDetail: TournamentDetailScreen,
+      TournamentCreate: TournamentCreateScreen,
       TournamentResult: TournamentResultScreen
     })
   },
